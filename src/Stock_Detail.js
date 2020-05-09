@@ -9,12 +9,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from "reactstrap";
 
 
-export default function Stock_Detail(name) {
+export default function Stock_Detail() {
 
   const [rowData, setRowData] = useState([]);
   
   useEffect(() => {
-    fetch('http://131.181.190.87:3001/history?symbol='+name)
+    fetch('http://131.181.190.87:3001/history?symbol=AAPL')
       .then(res => res.json())
       .then(data =>
         data.map(stock => {

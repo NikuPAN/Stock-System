@@ -13,6 +13,12 @@ import { Button, Badge } from "reactstrap";
 export default function Stock() {
 
 	const [rowData, setRowData] = useState([]);
+	const [gridApi, setGridApi] = useState(null);
+	const [columnDefs, setColumnDefs] = useState([
+		{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
+		{ headerName: "Name", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 400 },
+		{ headerName: "Industry", field: "industry", sortable: true, filter: "agTextColumnFilter", minWidth: 350 }
+	]);
 	//var gridApi, gridColumnApi;
 
 	useEffect(() => {
@@ -21,58 +27,54 @@ export default function Stock() {
       		.then(data =>
         	data.map(stock => {
 				return {
-					//timestamp: stock.timestamp,
 					symbol: stock.symbol,
 					name: stock.name,
-					industry: stock.industry,
-					//open: stock.open,
-					//high: stock.high,
-					//low: stock.low,
-					//close: stock.close,
-					//volume: stock.volume
+					industry: stock.industry
 				};
         	})
       	)
       	.then(stocks => setRowData(stocks));
 	}, []);
 
-	const gridOptions = {
-		columnDefs: [
-			//{ headerName: "Timestamp", field: "timestamp", sortable: true, filter: "agDateColumnFilter" },
-			{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
-			{ headerName: "Name", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 400 },
-			{ headerName: "Industry", field: "industry", sortable: true, filter: "agTextColumnFilter", minWidth: 350 }
-			//{ headerName: "Open", field: "open", sortable: true, filter: "agNumberColumnFilter" },
-			//{ headerName: "High", field: "high", sortable: true, filter: "agNumberColumnFilter" },
-			//{ headerName: "Low", field: "low", sortable: true, filter: "agNumberColumnFilter" },
-			//{ headerName: "Close", field: "close", sortable: true, filter: "agNumberColumnFilter" },
-			//{ headerName: "Volume", field: "volume", sortable: true, filter: "agNumberColumnFilter" }
-		],
-		defaultColDef: {
-			flex: 1,
-			minWidth: 100,
-			filter: true,
-			resizable: true,
-		},
-		rowSelection: 'single',
-		// groupSelectsChildren: true,
-		// groupSelectsFiltered: true,
-		// suppressAggFuncInHeader: true,
-		// suppressRowClickSelection: true,
-		//events
-		onGridReady: onGridReady,
-		onRowClicked: onRowClicked,
-		onCellFocused: onCellFocused,
-		onSelectionChanged: onSelectionChanged,
-	};
+	// const gridOptions = {
+	// 	columnDefs: [
+	// 		//{ headerName: "Timestamp", field: "timestamp", sortable: true, filter: "agDateColumnFilter" },
+	// 		{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
+	// 		{ headerName: "Name", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 400 },
+	// 		{ headerName: "Industry", field: "industry", sortable: true, filter: "agTextColumnFilter", minWidth: 350 }
+	// 		//{ headerName: "Open", field: "open", sortable: true, filter: "agNumberColumnFilter" },
+	// 		//{ headerName: "High", field: "high", sortable: true, filter: "agNumberColumnFilter" },
+	// 		//{ headerName: "Low", field: "low", sortable: true, filter: "agNumberColumnFilter" },
+	// 		//{ headerName: "Close", field: "close", sortable: true, filter: "agNumberColumnFilter" },
+	// 		//{ headerName: "Volume", field: "volume", sortable: true, filter: "agNumberColumnFilter" }
+	// 	],
+	// 	defaultColDef: {
+	// 		flex: 1,
+	// 		minWidth: 100,
+	// 		filter: true,
+	// 		resizable: true,
+	// 	},
+	// 	rowSelection: 'single',
+	// 	// groupSelectsChildren: true,
+	// 	// groupSelectsFiltered: true,
+	// 	// suppressAggFuncInHeader: true,
+	// 	// suppressRowClickSelection: true,
+	// 	//events
+	// 	onGridReady: onGridReady,
+	// 	onRowClicked: onRowClicked,
+	// 	onCellFocused: onCellFocused,
+	// 	onSelectionChanged: onSelectionChanged,
+	// };
 
 	// create handler function
-	function onGridReady() {
-		console.log('The grid is now ready');
-	}
+	// function onGridReady() {
+	// 	var gridDiv = document.querySelector('#myGrid');
+	// 	new Grid(gridDiv, gridOptions);
+	// 	console.log('The grid is now ready');
+	// }
 
 	function onSelectionChanged() {
-		// var selectedRows = gridOptions.api.getSelectedRows();
+		// var selectedRows = gridApi.getSelectedRows();
 		// document.querySelector('#selectedRows').innerHTML =
 		//   selectedRows.length === 1 ? selectedRows[0].athlete : '';
 		console.log('The Selection is changed');
@@ -85,22 +87,6 @@ export default function Stock() {
 	function onCellFocused(event) {
 		console.log('a cell was clicked');
 	}
-	
-	// setup the grid after the page has finished loading
-	document.addEventListener('DOMContentLoaded', function() {
-		console.log("1234");
-    	var gridDiv = document.querySelector('#myGrid');
-		new Grid(gridDiv, gridOptions);
-		// Grid
-		// 	.simpleHttpRequest({
-		// 	url:
-		// 		'http://131.181.190.87:3001/all',
-		// 	})
-		// 	.then(function(data) {
-		// 		gridOptions.api.setRowData(data);
-		// 	});
-	});
-
 
 	const stock_name_symbol = [];
 	var i;
@@ -120,41 +106,51 @@ export default function Stock() {
 	}
 
 	function onChangeStock(event, value) {
-		// prints the selected value
-		console.log("Stock changed! "+value.name);
-		/* 
-		When I try to console.log gridOptions, it shows everything, 
-		but when I add .api behind, it shows undefined
-		*/
-		console.log(gridOptions.api);
 
-		if(value.name.length !== "") {
-			gridOptions.api.setFilterModel({
-				name: {
-					type: 'set',
-					values: [value.name],
-				},
-			});
-		}
-		else { // reset the filter if the value is empty.
+		//console.log(gridApi);
 
+		console.log("Stock Search changed! "+(value!==null?value.name:"Null"));
+		if(gridApi) {
+			var filterInstance = gridApi.getFilterInstance('name');
+			if(value && value.name.length !== "") {
+				filterInstance.setModel({
+					type: 'equals',
+					filter: value.name
+				});
+				// Tell grid to run filter operation again
+			} 
+			// reset the filter if the value is empty.
+			else { 
+				filterInstance.setModel(null);
+			}
+			gridApi.onFilterChanged();
 		}
-		//gridOptions.api.onFilterChanged();
 	}
 
 	function onChangeIndustry(event, value) {
-		console.log("Industry changed! "+value.industry);
-		if(value.industry.length !== "") {
-			;
-		}
-		else { // reset the filter if the value is empty.
+		
+		console.log("Industry Filter changed! "+(value!==null?value.industry:"Null"));
 
+		if(gridApi) {
+			var filterInstance = gridApi.getFilterInstance('industry');
+			if(value && value.industry.length !== "") {
+				filterInstance.setModel({
+					type: 'equals',
+					filter: value.industry
+				});
+				// Tell grid to run filter operation again
+			} 
+			// reset the filter if the value is empty.
+			else { 
+				filterInstance.setModel(null);
+			}
+			gridApi.onFilterChanged();
 		}
 	}
 
 	// button to reset the filter, perhaps this is redundant
 	function clearFilter() {
-		gridOptions.api.setFilterModel(null);
+		gridApi.setFilterModel(null);
 	}
 
 	const useStyles = makeStyles({
@@ -217,8 +213,10 @@ export default function Stock() {
 			<div id="myGrid" className="ag-theme-alpine-dark"
 				style={{ height: "550px", width: "1024px" }} >
 				<AgGridReact
-					columnDefs={gridOptions.columnDefs}
+					columnDefs={columnDefs}
 					rowData={rowData}
+					onGridReady={ params => setGridApi(params.api) }
+					// onRowClicked={}
 					pagination={true}
 					paginationPageSize={10}
 				/>
