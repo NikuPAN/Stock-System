@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { AgGridReact } from "ag-grid-react";
-import {agGrid} from 'ag-grid-community';
+import { Grid } from 'ag-grid-community';
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 import TextField from '@material-ui/core/TextField';
@@ -15,7 +15,7 @@ export default function Stock() {
 	const [rowData, setRowData] = useState([]);
 	//var gridApi, gridColumnApi;
 
-	/*useEffect(() => {
+	useEffect(() => {
     	fetch('http://131.181.190.87:3001/all')
       		.then(res => res.json())
       		.then(data =>
@@ -34,9 +34,9 @@ export default function Stock() {
         	})
       	)
       	.then(stocks => setRowData(stocks));
-	}, []);*/
+	}, []);
 
-	var gridOptions = {
+	const gridOptions = {
 		columnDefs: [
 			//{ headerName: "Timestamp", field: "timestamp", sortable: true, filter: "agDateColumnFilter" },
 			{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
@@ -55,35 +55,52 @@ export default function Stock() {
 			resizable: true,
 		},
 		rowSelection: 'single',
-		groupSelectsChildren: true,
-		groupSelectsFiltered: true,
-		suppressAggFuncInHeader: true,
-		suppressRowClickSelection: true,
+		// groupSelectsChildren: true,
+		// groupSelectsFiltered: true,
+		// suppressAggFuncInHeader: true,
+		// suppressRowClickSelection: true,
 		//events
-		//onGridReady: function(event) { console.log('The grid is now ready'); },
-		//onRowClicked: function(event) { console.log('Row is clicked'); },
-		//onCellFocused: function(event) { console.log('A Cell is clicked'); },
+		onGridReady: onGridReady,
+		onRowClicked: onRowClicked,
+		onCellFocused: onCellFocused,
+		onSelectionChanged: onSelectionChanged,
 	};
+
+	// create handler function
+	function onGridReady() {
+		console.log('The grid is now ready');
+	}
+
+	function onSelectionChanged() {
+		// var selectedRows = gridOptions.api.getSelectedRows();
+		// document.querySelector('#selectedRows').innerHTML =
+		//   selectedRows.length === 1 ? selectedRows[0].athlete : '';
+		console.log('The Selection is changed');
+	}
+	
+	function onRowClicked(event) {
+    	console.log('a row was clicked');
+	}
+
+	function onCellFocused(event) {
+		console.log('a cell was clicked');
+	}
 	
 	// setup the grid after the page has finished loading
 	document.addEventListener('DOMContentLoaded', function() {
 		console.log("1234");
     	var gridDiv = document.querySelector('#myGrid');
-		new agGrid.Grid(gridDiv, gridOptions);
-		agGrid
-			.simpleHttpRequest({
-			url:
-				'http://131.181.190.87:3001/all',
-			})
-			.then(function(data) {
-				gridOptions.api.setRowData(data);
-			});
+		new Grid(gridDiv, gridOptions);
+		// Grid
+		// 	.simpleHttpRequest({
+		// 	url:
+		// 		'http://131.181.190.87:3001/all',
+		// 	})
+		// 	.then(function(data) {
+		// 		gridOptions.api.setRowData(data);
+		// 	});
 	});
 
-	// create handler function
-	function onRowClickedHandler(event) {
-    	console.log('The row was clicked');
-	}
 
 	const stock_name_symbol = [];
 	var i;
@@ -109,10 +126,10 @@ export default function Stock() {
 		When I try to console.log gridOptions, it shows everything, 
 		but when I add .api behind, it shows undefined
 		*/
-		console.log(gridOptions);
+		console.log(gridOptions.api);
 
 		if(value.name.length !== "") {
-			gridOptions.setFilterModel({
+			gridOptions.api.setFilterModel({
 				name: {
 					type: 'set',
 					values: [value.name],
@@ -182,7 +199,7 @@ export default function Stock() {
 						inputProps={{
 						...params.inputProps,
 						autoComplete: 'new-password', // disable autocomplete and autofill
-						}} 
+						}}
 					/>
 					)}
 				/>
