@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { AgGridReact } from "ag-grid-react";
-import {Grid} from 'ag-grid-community';
+import {agGrid} from 'ag-grid-community';
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 import TextField from '@material-ui/core/TextField';
@@ -15,7 +15,7 @@ export default function Stock() {
 	const [rowData, setRowData] = useState([]);
 	//var gridApi, gridColumnApi;
 
-	useEffect(() => {
+	/*useEffect(() => {
     	fetch('http://131.181.190.87:3001/all')
       		.then(res => res.json())
       		.then(data =>
@@ -34,7 +34,7 @@ export default function Stock() {
         	})
       	)
       	.then(stocks => setRowData(stocks));
-	}, []);
+	}, []);*/
 
 	var gridOptions = {
 		columnDefs: [
@@ -60,16 +60,24 @@ export default function Stock() {
 		suppressAggFuncInHeader: true,
 		suppressRowClickSelection: true,
 		//events
-		onGridReady: function(event) { console.log('The grid is now ready'); },
-		onRowClicked: function(event) { console.log('Row is clicked'); },
-		onCellFocused: function(event) { console.log('A Cell is clicked'); },
-	}
+		//onGridReady: function(event) { console.log('The grid is now ready'); },
+		//onRowClicked: function(event) { console.log('Row is clicked'); },
+		//onCellFocused: function(event) { console.log('A Cell is clicked'); },
+	};
 	
 	// setup the grid after the page has finished loading
 	document.addEventListener('DOMContentLoaded', function() {
 		console.log("1234");
     	var gridDiv = document.querySelector('#myGrid');
-		new Grid(gridDiv, gridOptions);
+		new agGrid.Grid(gridDiv, gridOptions);
+		agGrid
+			.simpleHttpRequest({
+			url:
+				'http://131.181.190.87:3001/all',
+			})
+			.then(function(data) {
+				gridOptions.api.setRowData(data);
+			});
 	});
 
 	// create handler function
@@ -189,7 +197,7 @@ export default function Stock() {
 				/>
 				<Button color="info" size="sm" className="mt-3" onClick={clearFilter}>Clear Filter</Button>
 			</form>
-			<div className="ag-theme-alpine-dark"
+			<div id="myGrid" className="ag-theme-alpine-dark"
 				style={{ height: "550px", width: "1024px" }} >
 				<AgGridReact
 					columnDefs={gridOptions.columnDefs}
