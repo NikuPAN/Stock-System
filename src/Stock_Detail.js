@@ -27,7 +27,7 @@ export default function Stock_Detail() {
             high: stock.high,
             low: stock.low,
             close: stock.close,
-            volume: stock.volume
+            volumes: stock.volumes
           };
         })
       )
@@ -35,15 +35,15 @@ export default function Stock_Detail() {
   }, []);
 
   const columns = [
-    { headerName: "Timestamp", field: "timestamp", sortable: true, filter: "agDateColumnFilter" },
+    { headerName: "Timestamp", field: "timestamp", sortable: true, filter: "agDateColumnFilter", minWidth: 220 },
     //{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
     //{ headerName: "Name", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 400 },
     //{ headerName: "Industry", field: "industry", sortable: true, filter: "agTextColumnFilter", minWidth: 350 },
-    { headerName: "Open", field: "open", sortable: true, filter: "agNumberColumnFilter" },
-    { headerName: "High", field: "high", sortable: true, filter: "agNumberColumnFilter" },
-    { headerName: "Low", field: "low", sortable: true, filter: "agNumberColumnFilter" },
-    { headerName: "Close", field: "close", sortable: true, filter: "agNumberColumnFilter" },
-    { headerName: "Volume", field: "volume", sortable: true, filter: "agNumberColumnFilter" }
+    { headerName: "Open", field: "open", sortable: true, filter: "agNumberColumnFilter", maxWidth: 150 },
+    { headerName: "High", field: "high", sortable: true, filter: "agNumberColumnFilter", maxWidth: 150 },
+    { headerName: "Low", field: "low", sortable: true, filter: "agNumberColumnFilter", maxWidth: 150 },
+    { headerName: "Close", field: "close", sortable: true, filter: "agNumberColumnFilter", maxWidth: 150 },
+    { headerName: "Volumes", field: "volumes", sortable: true, filter: "agNumberColumnFilter" }
   ];
   
   const stock_name_symbol = [];
