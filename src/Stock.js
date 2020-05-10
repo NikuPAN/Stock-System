@@ -23,7 +23,18 @@ export default function Stock() {
 	//var gridApi, gridColumnApi;
 
 	useEffect(() => {
-		setRowData([{"symbol":"A","name":"Agilent Technologies Inc","industry":"Health Care"},{"symbol":"AAL","name":"American Airlines Group","industry":"Industrials"},{"symbol":"AAP","name":"Advance Auto Parts","industry":"Consumer Discretionary"}]);
+    	fetch('http://131.181.190.87:3001/all')
+      		.then(res => res.json())
+      		.then(data =>
+        	data.map(stock => {
+				return {
+					symbol: stock.symbol,
+					name: stock.name,
+					industry: stock.industry
+				};
+        	})
+      	)
+      	.then(stocks => setRowData(stocks));
 	}, []);
 
 	// const gridOptions = {

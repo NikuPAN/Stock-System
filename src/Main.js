@@ -21,7 +21,6 @@ class Main extends Component {
                         <li><NavLink exact to="/">Home</NavLink></li>
                         <li><NavLink to="/stocks">Stocks</NavLink></li>
                         <li><NavLink to="/contact">Contact</NavLink></li>
-                        <li><NavLink to="/stocks_detail">Stock History</NavLink></li>
                     </ul>
                     <div className="content">
                         <Route exact path="/" component={Home}/>
