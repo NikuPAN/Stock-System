@@ -12,12 +12,14 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Button } from "reactstrap";
+import { useParams } from "react-router";
 
 
 export default function Stock_Detail() {
 
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
+  const { symbol } = useParams();
   const [columnDefs, setColumnDefs] = useState([
 		{ headerName: "Timestamp", field: "timestamp", sortable: true, filter: "agDateColumnFilter", minWidth: 220 },
     //{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
@@ -31,7 +33,7 @@ export default function Stock_Detail() {
   ]);
 
   useEffect(() => {
-    fetch('http://131.181.190.87:3001/history?symbol=AAPL')
+    fetch(`http://131.181.190.87:3001/history?symbol=${symbol}`)
       .then(res => res.json())
       .then(data =>
         data.map(stock => {

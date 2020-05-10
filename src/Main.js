@@ -26,7 +26,7 @@ class Main extends Component {
                     <div className="content">
                         <Route exact path="/" component={Home}/>
                         <Route path="/stocks" component={Stock}/>
-                        <Route path="/stocks_detail" component={Stock_Detail}/>
+                        <Route path="/stocks_detail/:symbol" component={Stock_Detail}/>
                         <Route path="/contact" component={Contact}/>
                     </div>
                     <script src="https://unpkg.com/@ag-grid-enterprise/all-modules@23.1.0/dist/ag-grid-enterprise.min.js"></script>

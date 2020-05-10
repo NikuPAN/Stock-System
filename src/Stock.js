@@ -7,12 +7,14 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Badge } from "reactstrap";
+import { useHistory } from 'react-router-dom';
 
 
 export default function Stock() {
 
 	const [rowData, setRowData] = useState([]);
 	const [gridApi, setGridApi] = useState(null);
+	const history = useHistory();
 	const [columnDefs, setColumnDefs] = useState([
 		{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
 		{ headerName: "Name", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 400 },
@@ -21,18 +23,7 @@ export default function Stock() {
 	//var gridApi, gridColumnApi;
 
 	useEffect(() => {
-    	fetch('http://131.181.190.87:3001/all')
-      		.then(res => res.json())
-      		.then(data =>
-        	data.map(stock => {
-				return {
-					symbol: stock.symbol,
-					name: stock.name,
-					industry: stock.industry
-				};
-        	})
-      	)
-      	.then(stocks => setRowData(stocks));
+		setRowData([{"symbol":"A","name":"Agilent Technologies Inc","industry":"Health Care"},{"symbol":"AAL","name":"American Airlines Group","industry":"Industrials"},{"symbol":"AAP","name":"Advance Auto Parts","industry":"Consumer Discretionary"}]);
 	}, []);
 
 	// const gridOptions = {
@@ -79,11 +70,13 @@ export default function Stock() {
 		console.log('The Selection is changed');
 	}
 	
-	function onRowClicked(event) {
-    	console.log('a row was clicked');
+	function onRowClicked(event, val) {
+		console.log('a row was clicked', event.rowIndex);
+		const selectedSymbol = rowData[event.rowIndex].symbol;
+		history.push(`/stocks_detail/${selectedSymbol}`);
 	}
 
-	function onCellFocused(event) {
+	function onCellFocused(event, val) {
 		console.log('a cell was clicked');
 	}
 
@@ -215,7 +208,7 @@ export default function Stock() {
 					columnDefs={columnDefs}
 					rowData={rowData}
 					onGridReady={ params => setGridApi(params.api) }
-					// onRowClicked={}
+					onRowClicked={onRowClicked}
 					pagination={true}
 					paginationPageSize={10}
 				/>
