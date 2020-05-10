@@ -18,21 +18,25 @@ class MultiAxisChart extends Component {
 		}
 		this.chart.render();
 	}
+	// Do update chart data here
+	updateChartAxis(data, datapoints) {
+		
+	}
     render() {
         const options = {
-			theme: "light2",
+			theme: "dark2", // light2 works as well
 			animationEnabled: true,
 			title:{
-				text: "Units Sold VS Profit"
+				text: "High vs Closing Price"
 			},
 			subtitles: [{
 				text: "Click Legend to Hide or Unhide Data Series"
 			}],
 			axisX: {
-				title: "States"
+				title: "Dates"
 			},
 			axisY: {
-				title: "Units Sold",
+				title: "High Price",
 				titleFontColor: "#6D78AD",
 				lineColor: "#6D78AD",
 				labelFontColor: "#6D78AD",
@@ -40,7 +44,7 @@ class MultiAxisChart extends Component {
 				includeZero: false
 			},
 			axisY2: {
-				title: "Profit in USD",
+				title: "Closing Price",
 				titleFontColor: "#51CDA0",
 				lineColor: "#51CDA0",
 				labelFontColor: "#51CDA0",
@@ -56,7 +60,7 @@ class MultiAxisChart extends Component {
 			},
 			data: [{
 				type: "spline",
-				name: "Units Sold",
+				name: "High Price",
 				showInLegend: true,
 				xValueFormatString: "MMM YYYY",
 				yValueFormatString: "#,##0 Units",
@@ -77,7 +81,7 @@ class MultiAxisChart extends Component {
 			},
 			{
 				type: "spline",
-				name: "Profit",
+				name: "Closing Price",
 				axisYType: "secondary",
 				showInLegend: true,
 				xValueFormatString: "MMM YYYY",

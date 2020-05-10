@@ -98,7 +98,7 @@ export default function Stock_Detail() {
 				Back to Stocks Page
 			</Button>
 			<div  id="myGrid" className="ag-theme-alpine-dark"
-				style={{ height: "350px", width: "100%" }} >
+				style={{ height: "320px", width: "100%" }} >
 				<AgGridReact
 					columnDefs={columnDefs}
 					rowData={rowData}
