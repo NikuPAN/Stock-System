@@ -13,6 +13,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import MultiAxisChart from './component/MultiAxisChart';
+import DatePickers from "./component/DatePickers"
 
 
 export default function Stock_Detail() {
@@ -84,8 +85,9 @@ export default function Stock_Detail() {
 					<Typography className={classes.heading}><b>Filters (Click to expand)</b></Typography>
 				</ExpansionPanelSummary>
 				<ExpansionPanelDetails>
-					{/*
-					add filters here
+					{/* 
+					tried to include datepickers but errors. 
+					<DatePickers />
 					*/}
 				</ExpansionPanelDetails>
 			</ExpansionPanel>
