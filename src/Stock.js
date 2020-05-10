@@ -19,6 +19,8 @@ export default function Stock() {
 
 	const [rowData, setRowData] = useState([]);
 	const [gridApi, setGridApi] = useState(null);
+	const [textValue, setTextValue] = useState(''); // for stock textfield
+	const [textValue2, setTextValue2] = useState(''); // for industry textfield
 	const history = useHistory();
 	const [columnDefs, setColumnDefs] = useState([
 		{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
@@ -69,7 +71,6 @@ export default function Stock() {
 	// 	onGridReady: onGridReady,
 	// 	onRowClicked: onRowClicked,
 	// 	onCellFocused: onCellFocused,
-	// 	onSelectionChanged: onSelectionChanged,
 	// };
 
 	// create handler function
@@ -78,13 +79,6 @@ export default function Stock() {
 	// 	new Grid(gridDiv, gridOptions);
 	// 	console.log('The grid is now ready');
 	// }
-
-	function onSelectionChanged() {
-		// var selectedRows = gridApi.getSelectedRows();
-		// document.querySelector('#selectedRows').innerHTML =
-		//   selectedRows.length === 1 ? selectedRows[0].athlete : '';
-		console.log('The Selection is changed');
-	}
 	
 	function onRowClicked(event, val) {
 		console.log('a row was clicked', event.rowIndex);
@@ -125,16 +119,19 @@ export default function Stock() {
 					type: 'equals',
 					filter: value.name
 				});
-				// Tell grid to run filter operation again
+				setTextValue(value.name);
 			} 
 			// reset the filter if the value is empty.
 			else { 
 				filterInstance.setModel(null);
+				setTextValue(null);
+				// clearFilter();
 			}
+			// Tell grid to run filter operation again
 			gridApi.onFilterChanged();
-			console.log(gridApi.getModel().rootNode.childrenAfterFilter.length +" results after filtered")
-			var height = 100 + (gridApi.getModel().rootNode.childrenAfterFilter.length>=10?550:
-				(gridApi.getModel().rootNode.childrenAfterFilter.length) * 50);
+			var dataLength = gridApi.getModel().rootNode.childrenAfterFilter.length;
+			console.log(dataLength +" results after filtered")
+			var height = 100 + (dataLength >= 10 ? 450 : dataLength * 50);
 			setWidthAndHeight('100%', `${height}px`);
 		}
 	}
@@ -150,16 +147,20 @@ export default function Stock() {
 					type: 'equals',
 					filter: value.industry
 				});
-				// Tell grid to run filter operation again
+				setTextValue2(value.industry);
+				
 			} 
 			// reset the filter if the value is empty.
 			else { 
 				filterInstance.setModel(null);
+				setTextValue2(null);
+				//clearFilter();
 			}
+			// Tell grid to run filter operation again
 			gridApi.onFilterChanged();
-			console.log(gridApi.getModel().rootNode.childrenAfterFilter.length +" results after filtered")
-			var height = 100 + (gridApi.getModel().rootNode.childrenAfterFilter.length>=10?550:
-				(gridApi.getModel().rootNode.childrenAfterFilter.length) * 50);
+			var dataLength = gridApi.getModel().rootNode.childrenAfterFilter.length;
+			console.log(dataLength +" results after filtered")
+			var height = 100 + (dataLength >= 10 ? 450 : dataLength * 50);
 			setWidthAndHeight('100%', `${height}px`);
 		}
 	}
@@ -167,8 +168,16 @@ export default function Stock() {
 	// button to reset the filter, perhaps this is redundant
 	function clearFilter() {
 		gridApi.setFilterModel(null);
-		document.getElementById("search-stock-combo").value = null;
-		document.getElementById("filter-industry-combo").value = null;
+		// var filterInstance = gridApi.getFilterInstance('name');
+		// filterInstance.setModel(null);
+		// filterInstance = gridApi.getFilterInstance('industry');
+		// filterInstance.setModel(null);
+		setTextValue(null);
+		setTextValue2(null);
+		// Tell grid to run filter operation again
+		gridApi.onFilterChanged();
+		//document.getElementById("search-stock-combo").value = null;
+		//document.getElementById("filter-industry-combo").value = null;
 		setWidthAndHeight('100%', '550px');
 	}
 
@@ -228,6 +237,7 @@ export default function Stock() {
 							<TextField {...params} 
 								label="Search Stocks" 
 								variant="outlined" 
+								value={textValue}
 								inputProps={{
 								...params.inputProps,
 								autoComplete: 'new-password', // disable autocomplete and autofill
@@ -242,7 +252,13 @@ export default function Stock() {
 							onChange={onChangeIndustry}
 							options={industries_uni}
 							getOptionLabel={(option) => option.industry}
-							renderInput={(params) => <TextField {...params} label="Sort by Industries" variant="outlined" />}
+							renderInput={(params) => (
+							<TextField {...params} 
+								label="Sort by Industries" 
+								variant="outlined"
+								value={textValue2}
+							/>
+							)}
 						/>
 						<Button color="info" size="sm" className="mt-3" onClick={clearFilter}>Clear Filter</Button>
 					</form>

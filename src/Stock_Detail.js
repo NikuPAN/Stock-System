@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import "./styles.css";
-import { Button } from "reactstrap";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
+import { Button } from 'reactstrap';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
 import { makeStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { useParams } from "react-router";
+import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
+import MultiAxisChart from './component/MultiAxisChart';
+
 
 export default function Stock_Detail() {
 
@@ -38,20 +40,20 @@ export default function Stock_Detail() {
 		fetch(`http://131.181.190.87:3001/history?symbol=${symbol}`)
 			.then(res => res.json())
 			.then(data =>
-			data.map(stock => {
-				return {
-				timestamp: stock.timestamp,
-				date: new Date(stock.timestamp).toLocaleString("en-AU"),
-				symbol: stock.symbol,
-				name: stock.name,
-				industry: stock.industry,
-				open: stock.open,
-				high: stock.high,
-				low: stock.low,
-				close: stock.close,
-				volumes: stock.volumes
-				};
-			})
+				data.map(stock => {
+					return {
+					timestamp: stock.timestamp,
+					date: new Date(stock.timestamp).toLocaleString("en-AU"),
+					symbol: stock.symbol,
+					name: stock.name,
+					industry: stock.industry,
+					open: stock.open,
+					high: stock.high,
+					low: stock.low,
+					close: stock.close,
+					volumes: stock.volumes
+					};
+				})
 			)
 			.then(stocks => setRowData(stocks));
 	}, []);
@@ -82,7 +84,9 @@ export default function Stock_Detail() {
 					<Typography className={classes.heading}><b>Filters (Click to expand)</b></Typography>
 				</ExpansionPanelSummary>
 				<ExpansionPanelDetails>
-
+					{/*
+					add filters here
+					*/}
 				</ExpansionPanelDetails>
 			</ExpansionPanel>
 			<br/>
@@ -93,17 +97,18 @@ export default function Stock_Detail() {
 				color="info" size="sm" className="mt-3" onClick={onBackButtonClick}>
 				Back to Stocks Page
 			</Button>
-			<div className="ag-theme-alpine-dark"
-				style={{ height: "550px", width: "100%" }} >
-			<AgGridReact
-				columnDefs={columnDefs}
-				rowData={rowData}
-				onGridReady={ params => setGridApi(params.api) }
-				// onRowClicked={}
-				pagination={true}
-				paginationPageSize={10}
-			/>
+			<div  id="myGrid" className="ag-theme-alpine-dark"
+				style={{ height: "350px", width: "100%" }} >
+				<AgGridReact
+					columnDefs={columnDefs}
+					rowData={rowData}
+					onGridReady={ params => setGridApi(params.api) }
+					// onRowClicked={}
+					pagination={true}
+					paginationPageSize={5}
+				/>
 			</div>
+			<MultiAxisChart width="100%" height="400px"/>
 		</div>
 	);
 }
