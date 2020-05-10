@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { AgGridReact } from "ag-grid-react";
-import { Grid } from 'ag-grid-community';
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 import TextField from '@material-ui/core/TextField';
@@ -211,7 +210,7 @@ export default function Stock() {
 				<Button color="info" size="sm" className="mt-3" onClick={clearFilter}>Clear Filter</Button>
 			</form>
 			<div id="myGrid" className="ag-theme-alpine-dark"
-				style={{ height: "550px", width: "1024px" }} >
+				style={{ height: "550px", width: "100%" }} >
 				<AgGridReact
 					columnDefs={columnDefs}
 					rowData={rowData}
