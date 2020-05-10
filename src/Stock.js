@@ -6,6 +6,11 @@ import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles } from '@material-ui/core/styles';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Button, Badge } from "reactstrap";
 import { useHistory } from 'react-router-dom';
 
@@ -83,7 +88,7 @@ export default function Stock() {
 	
 	function onRowClicked(event, val) {
 		console.log('a row was clicked', event.rowIndex);
-		const selectedSymbol = rowData[event.rowIndex].symbol;
+		const selectedSymbol = event.data.symbol;
 		history.push(`/stocks_detail/${selectedSymbol}`);
 	}
 
@@ -127,6 +132,10 @@ export default function Stock() {
 				filterInstance.setModel(null);
 			}
 			gridApi.onFilterChanged();
+			console.log(gridApi.getModel().rootNode.childrenAfterFilter.length +" results after filtered")
+			var height = 100 + (gridApi.getModel().rootNode.childrenAfterFilter.length>=10?550:
+				(gridApi.getModel().rootNode.childrenAfterFilter.length) * 50);
+			setWidthAndHeight('100%', `${height}px`);
 		}
 	}
 
@@ -148,12 +157,26 @@ export default function Stock() {
 				filterInstance.setModel(null);
 			}
 			gridApi.onFilterChanged();
+			console.log(gridApi.getModel().rootNode.childrenAfterFilter.length +" results after filtered")
+			var height = 100 + (gridApi.getModel().rootNode.childrenAfterFilter.length>=10?550:
+				(gridApi.getModel().rootNode.childrenAfterFilter.length) * 50);
+			setWidthAndHeight('100%', `${height}px`);
 		}
 	}
 
 	// button to reset the filter, perhaps this is redundant
 	function clearFilter() {
 		gridApi.setFilterModel(null);
+		document.getElementById("search-stock-combo").value = null;
+		document.getElementById("filter-industry-combo").value = null;
+		setWidthAndHeight('100%', '550px');
+	}
+
+	function setWidthAndHeight(width, height) {
+		var eGridDiv = document.querySelector('#myGrid');
+		eGridDiv.style.width = width;
+		eGridDiv.style.height = height;
+		gridApi.doLayout();
 	}
 
 	const useStyles = makeStyles({
@@ -173,46 +196,59 @@ export default function Stock() {
 				<Badge color="success">{rowData.length}</Badge> Stocks found in the
 				system
 			</p>
-			<form autoComplete="off" alignment="right">
-				<label htmlFor="search-stock-combo">Search Stock:&nbsp;</label>
-				<Autocomplete
-					id="search-stock-combo"
-					style={{ width: 300 }}
-					onChange={onChangeStock}
-					options={stock_name_symbol}
-					classes={{
-						option: classes.option,
-					}}
-					autoHighlight
-					getOptionLabel={(option) => option.name}
-					renderOption={(option) => (
-						<React.Fragment>
-						<span><b>{option.symbol}</b></span>
-						{option.name}
-						</React.Fragment>
-					)}
-					renderInput={(params) => (
-					<TextField {...params} 
-						label="Search Stocks" 
-						variant="outlined" 
-						inputProps={{
-						...params.inputProps,
-						autoComplete: 'new-password', // disable autocomplete and autofill
-						}}
-					/>
-					)}
-				/>
-				<label htmlFor="filter-industry-combo">Filter by Industry:&nbsp;</label>
-				<Autocomplete
-					id="filter-industry-combo"
-					style={{ width: 300 }}
-					onChange={onChangeIndustry}
-					options={industries_uni}
-					getOptionLabel={(option) => option.industry}
-					renderInput={(params) => <TextField {...params} label="Sort by Industries" variant="outlined" />}
-				/>
-				<Button color="info" size="sm" className="mt-3" onClick={clearFilter}>Clear Filter</Button>
-			</form>
+			<ExpansionPanel>
+      			<ExpansionPanelSummary
+          			expandIcon={<ExpandMoreIcon />}
+          			aria-controls="panel1a-content"
+          			id="panel1a-header"
+        		>
+          		<Typography className={classes.heading}><b>Filters (Click to expand)</b></Typography>
+        		</ExpansionPanelSummary>
+
+        		<ExpansionPanelDetails>
+					<form autoComplete="off" alignment="right">
+						<label htmlFor="search-stock-combo">Search Stock:&nbsp;</label>
+						<Autocomplete
+							id="search-stock-combo"
+							style={{ width: 300 }}
+							onChange={onChangeStock}
+							options={stock_name_symbol}
+							classes={{
+								option: classes.option,
+							}}
+							autoHighlight
+							getOptionLabel={(option) => option.name}
+							renderOption={(option) => (
+								<React.Fragment>
+								<span><b>{option.symbol}</b></span>
+								{option.name}
+								</React.Fragment>
+							)}
+							renderInput={(params) => (
+							<TextField {...params} 
+								label="Search Stocks" 
+								variant="outlined" 
+								inputProps={{
+								...params.inputProps,
+								autoComplete: 'new-password', // disable autocomplete and autofill
+								}}
+							/>
+							)}
+						/>
+						<label htmlFor="filter-industry-combo">Filter by Industry:&nbsp;</label>
+						<Autocomplete
+							id="filter-industry-combo"
+							style={{ width: 300 }}
+							onChange={onChangeIndustry}
+							options={industries_uni}
+							getOptionLabel={(option) => option.industry}
+							renderInput={(params) => <TextField {...params} label="Sort by Industries" variant="outlined" />}
+						/>
+						<Button color="info" size="sm" className="mt-3" onClick={clearFilter}>Clear Filter</Button>
+					</form>
+        		</ExpansionPanelDetails>
+      		</ExpansionPanel>
+			
 			<div id="myGrid" className="ag-theme-alpine-dark"
 				style={{ height: "550px", width: "100%" }} >
 				<AgGridReact
