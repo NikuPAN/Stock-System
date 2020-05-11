@@ -1,6 +1,7 @@
 import 'date-fns';
 import React, { useState }  from 'react';
 import Grid from '@material-ui/core/Grid';
+//import { FormRow } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
@@ -10,35 +11,40 @@ import {
 export default function DatePickers() {
 
   // The first commit of Material-UI
-  const [selectedDate, setSelectedDate] = useState(new Date('2014-08-18T21:11:54'));
+  const [selectedDateFrom, setSelectedDateFrom] = useState(new Date());
+  const [selectedDateTo, setSelectedDateTo] = useState(new Date());
 
-  function handleDateChange(date) {
-    setSelectedDate(date);
+  function dateChangeFrom(date) {
+    setSelectedDateFrom(date);
+  }
+
+  function dateChangeTo(date) {
+    setSelectedDateTo(date);
   }
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Grid container justify="space-around">
         <KeyboardDatePicker
-          disableToolbar
+          id="date-picker-from"
+          label="From"
           variant="inline"
-          format="MM/dd/yyyy"
           margin="normal"
-          id="date-picker-inline"
-          label="Date picker inline"
-          value={selectedDate}
-          onChange={handleDateChange}
+          format="yyyy/MM/dd"
+          value={selectedDateFrom}
+          onChange={dateChangeFrom}
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
         />
         <KeyboardDatePicker
+          id="date-picker-to"
+          label="To"
+          variant="inline"
           margin="normal"
-          id="date-picker-dialog"
-          label="Date picker dialog"
-          format="MM/dd/yyyy"
-          value={selectedDate}
-          onChange={handleDateChange}
+          format="yyyy/MM/dd"
+          value={selectedDateTo}
+          onChange={dateChangeTo}
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}

@@ -20,7 +20,6 @@ export default function Stock_Detail() {
 
 	const [rowData, setRowData] = useState([]);
 	const [gridApi, setGridApi] = useState(null);
-	//const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
 	const { symbol } = useParams();
 	const history = useHistory();
 
@@ -44,7 +43,7 @@ export default function Stock_Detail() {
 				data.map(stock => {
 					return {
 					timestamp: stock.timestamp,
-					date: new Date(stock.timestamp).toLocaleString("en-AU"),
+					date: new Date(stock.timestamp).toLocaleDateString(),
 					symbol: stock.symbol,
 					name: stock.name,
 					industry: stock.industry,
@@ -74,21 +73,32 @@ export default function Stock_Detail() {
 		history.push("/stocks");
 	}
 
+	// just a small effect change of hint texts
+	function onExpandPanelChange(event, expand) {
+		document.getElementById('filterDetail').innerHTML = "<b>Filters</b> (Click to "+(expand?"collapse":"expand")+")";
+	}
+
+
 	return (
 		<div className="container">
-			<ExpansionPanel>
+			<ExpansionPanel 
+				defaultExpanded="true"
+				onChange={onExpandPanelChange}
+			>
 				<ExpansionPanelSummary
 					expandIcon={<ExpandMoreIcon />}
 					aria-controls="panel1a-content"
 					id="panel1a-header"
 				>
-					<Typography className={classes.heading}><b>Filters (Click to expand)</b></Typography>
+					<Typography className={classes.heading} id="filterDetail"><b>Filters</b> (Click to collapse)</Typography>
 				</ExpansionPanelSummary>
 				<ExpansionPanelDetails>
-					{/* 
-					tried to include datepickers but errors. 
+					{/* Import from component so we do not have to put all codes into one file. */}
+					<label><b>Showing Stocks</b></label>
 					<DatePickers />
-					*/}
+					
+					<label><b>Showing Stocks Price</b></label>
+
 				</ExpansionPanelDetails>
 			</ExpansionPanel>
 			<br/>

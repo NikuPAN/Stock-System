@@ -86,9 +86,9 @@ export default function Stock() {
 		history.push(`/stocks_detail/${selectedSymbol}`);
 	}
 
-	function onCellFocused(event, val) {
-		console.log('a cell was clicked');
-	}
+	// function onCellFocused(event, val) {
+	// 	console.log('a cell was clicked');
+	// }
 
 	const stock_name_symbol = [];
 	var i;
@@ -96,7 +96,7 @@ export default function Stock() {
 		stock_name_symbol.push({symbol: rowData[i].symbol, name: rowData[i].name});
 	}
 
-	// Filter only shows each industry once
+	// Creata a unique industry array
 	const industries_uni = [];
 	var flags = [];
 	for(i = 0; i < rowData.length; i++) {
@@ -110,7 +110,6 @@ export default function Stock() {
 	function onChangeStock(event, value) {
 
 		//console.log(gridApi);
-
 		console.log("Stock Search changed! "+(value!==null?value.name:"Null"));
 		if(gridApi) {
 			var filterInstance = gridApi.getFilterInstance('name');
@@ -119,13 +118,12 @@ export default function Stock() {
 					type: 'equals',
 					filter: value.name
 				});
-				setTextValue(value.name);
+				setTextValue(event.target.value);
 			} 
 			// reset the filter if the value is empty.
 			else { 
 				filterInstance.setModel(null);
-				setTextValue(null);
-				// clearFilter();
+				setTextValue('');
 			}
 			// Tell grid to run filter operation again
 			gridApi.onFilterChanged();
@@ -147,14 +145,13 @@ export default function Stock() {
 					type: 'equals',
 					filter: value.industry
 				});
-				setTextValue2(value.industry);
+				setTextValue2(event.target.value);
 				
 			} 
 			// reset the filter if the value is empty.
 			else { 
 				filterInstance.setModel(null);
-				setTextValue2(null);
-				//clearFilter();
+				setTextValue2('');
 			}
 			// Tell grid to run filter operation again
 			gridApi.onFilterChanged();
@@ -168,12 +165,8 @@ export default function Stock() {
 	// button to reset the filter, perhaps this is redundant
 	function clearFilter() {
 		gridApi.setFilterModel(null);
-		// var filterInstance = gridApi.getFilterInstance('name');
-		// filterInstance.setModel(null);
-		// filterInstance = gridApi.getFilterInstance('industry');
-		// filterInstance.setModel(null);
-		setTextValue(null);
-		setTextValue2(null);
+		setTextValue('');
+		setTextValue2('');
 		// Tell grid to run filter operation again
 		gridApi.onFilterChanged();
 		//document.getElementById("search-stock-combo").value = null;
@@ -199,19 +192,27 @@ export default function Stock() {
 	});
 	const classes = useStyles();
 
+	// just a small effect change of hint texts
+	function onExpandPanelChange(event, expand) {
+		document.getElementById('filterHint').innerHTML = "<b>Filters</b> (Click to "+(expand?"collapse":"expand")+")";
+	}
+
 	return (
 		<div className="container">
 			<p>
 				<Badge color="success">{rowData.length}</Badge> Stocks found in the
 				system
 			</p>
-			<ExpansionPanel>
+			<ExpansionPanel 
+				defaultExpanded="true"
+				onChange={onExpandPanelChange}
+			>
       			<ExpansionPanelSummary
           			expandIcon={<ExpandMoreIcon />}
           			aria-controls="panel1a-content"
           			id="panel1a-header"
         		>
-          		<Typography className={classes.heading}><b>Filters (Click to expand)</b></Typography>
+          		<Typography className={classes.heading} id="filterHint"><b>Filters</b> (Click to collapse)</Typography>
         		</ExpansionPanelSummary>
 
         		<ExpansionPanelDetails>
@@ -254,7 +255,7 @@ export default function Stock() {
 							getOptionLabel={(option) => option.industry}
 							renderInput={(params) => (
 							<TextField {...params} 
-								label="Sort by Industries" 
+								label="Filter by Industries" 
 								variant="outlined"
 								value={textValue2}
 							/>
