@@ -39,12 +39,17 @@ export default function DatePickers(props) {
     // console.log("latest: "+selectedDateTo);
   }, [props.data, props.data.length]);
 
-  function dateChangeFrom(date) {
+  // Handling functions for change
+  function dateChangeFrom(date) { // (event, date) can be used but event is not needed
     setSelectedDateFrom(date);
+    // update parent
+    props.onDatesChange(date, selectedDateTo);
   }
 
-  function dateChangeTo(date) {
+  function dateChangeTo(date) { // (event, date) can be used but event is not needed
     setSelectedDateTo(date);
+    // update parent
+    props.onDatesChange(selectedDateFrom, date);
   }
   
   return (

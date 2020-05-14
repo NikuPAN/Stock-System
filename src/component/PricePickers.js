@@ -46,12 +46,23 @@ export default function PricePickers(props) {
     // Although setstate can be used
     // There is some custom trick to pass the data back to stock detail
     function priceChangeFrom(event) {
-        setSelectedPriceFrom(event.target.value);
+        var value = event.target.value;
+        setSelectedPriceFrom(value);
+        // update parent
+        props.onPricesChange(value, selectedPriceTo);
+        
     }
 
     function priceChangeTo(event) {
-        setSelectedPriceTo(event.target.value);
+        var value = event.target.value;
+        setSelectedPriceTo(value);
+        // update parent
+        props.onPricesChange(selectedPriceFrom, value);
     }
+
+    // function priceUpdated() {
+    //     props.onPricesChange(selectedPriceFrom, selectedPriceTo);
+    // }
 
     return (
         <form className={classes.root} noValidate autoComplete="off">

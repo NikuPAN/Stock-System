@@ -79,20 +79,13 @@ export default function Stock_Detail() {
 		document.getElementById('filterDetail').innerHTML = "<b>Filters</b> (Click to "+(expand?"collapse":"expand")+")";
 	}
 
-	function onDateFromChange() {
-		console.log("onDateFromChange is called!");
+	function onDateRangeChange(from, to) {
+		console.log("onDateRangeChange is called! (From: "+from+", To:"+to);
 	}
 
-	function onDateToChange() {
-		console.log("onDateToChange is called!");
-	}
 
-	function onPriceFromChange() {
-		console.log("onPriceFromChange is called!");
-	}
-
-	function onPriceToChange() {
-		console.log("onPriceToChange is called!");
+	function onPriceRangeChange(from, to) {
+		console.log("onPriceRangeChange is called! (From: "+from+", To:"+to);
 	}
 
 	return (
@@ -112,10 +105,10 @@ export default function Stock_Detail() {
 				<form autoComplete="off" alignment="right">
 					{/* Import from component so we do not have to put all codes into one file. */}
 					<label><b>Showing Date Range</b></label>
-					<DatePickers data={rowData} />
+					<DatePickers data={rowData} onDatesChange={onDateRangeChange} />
 					<br/>
 					<label><b>Closing Price Range</b></label>
-					<PricePickers data={rowData}/>
+					<PricePickers data={rowData} onPricesChange={onPriceRangeChange}/>
 					{/* <br/>
 					<label><b>Showing Stocks' High Price</b></label>
 					<PricePickers /> */}
