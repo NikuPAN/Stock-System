@@ -19,8 +19,8 @@ export default function Stock() {
 
 	const [rowData, setRowData] = useState([]);
 	const [gridApi, setGridApi] = useState(null);
-	const [textValue, setTextValue] = useState(''); // for stock textfield
-	const [textValue2, setTextValue2] = useState(''); // for industry textfield
+	const [textValue, setTextValue] = useState(""); // for stock textfield
+	const [textValue2, setTextValue2] = useState(""); // for industry textfield
 	const history = useHistory();
 	const [columnDefs, setColumnDefs] = useState([
 		{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
@@ -108,7 +108,6 @@ export default function Stock() {
 	}
 
 	function onChangeStock(event, value) {
-
 		//console.log(gridApi);
 		console.log("Stock Search changed! "+(value!==null?value.name:"Null"));
 		if(gridApi) {
@@ -119,6 +118,7 @@ export default function Stock() {
 					filter: value.name
 				});
 				setTextValue(event.target.value);
+				console.log(textValue);
 			} 
 			// reset the filter if the value is empty.
 			else { 
@@ -145,7 +145,7 @@ export default function Stock() {
 					filter: value.industry
 				});
 				setTextValue2(event.target.value);
-				
+				console.log(textValue2);
 			} 
 			// reset the filter if the value is empty.
 			else { 
@@ -168,8 +168,6 @@ export default function Stock() {
 		setTextValue2('');
 		// Tell grid to run filter operation again
 		gridApi.onFilterChanged();
-		//document.getElementById("search-stock-combo").value = null;
-		//document.getElementById("filter-industry-combo").value = null;
 		setWidthAndHeight('100%', '550px');
 	}
 
@@ -233,14 +231,15 @@ export default function Stock() {
 								{option.name}
 								</React.Fragment>
 							)}
+							//value={textValue}
 							renderInput={(params) => (
-							<TextField {...params} 
+							<TextField {...params}
 								label="Search Stocks" 
 								variant="outlined" 
 								value={textValue}
 								inputProps={{
 								...params.inputProps,
-								autoComplete: 'new-password', // disable autocomplete and autofill
+								autoComplete: 'new-password', // disable autofill
 								}}
 							/>
 							)}
@@ -252,6 +251,7 @@ export default function Stock() {
 							onChange={onChangeIndustry}
 							options={industries_uni}
 							getOptionLabel={(option) => option.industry}
+							//value={textValue2}
 							renderInput={(params) => (
 							<TextField {...params} 
 								label="Filter by Industries" 

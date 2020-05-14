@@ -8,36 +8,35 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
+// export default function DatePickers(props) {
 export default function DatePickers(props) {
   
   // Initialize
-  const [selectedDateFrom, setSelectedDateFrom] = useState();
-  const [selectedDateTo, setSelectedDateTo] = useState();
+  // note the month index is from 0 to 11, represents january to december 
+  const [selectedDateFrom, setSelectedDateFrom] = useState(new Date(2019, 10, 6));
+  const [selectedDateTo, setSelectedDateTo] = useState(new Date(2020, 2, 25));
 
-  useEffect(() => {
-    var i, earliest, latest;
-    // Get the earliest and lastest date of the stock
-    // Make sure there is data available
-    if(props.data.length > 0) {
-      earliest = new Date(props.data[0].timestamp);
-      latest = new Date(props.data[0].timestamp);
-      for(i = 0; i < props.data.length; i++) {
-        var currDate = new Date(props.data[i].timestamp);
-        if(currDate > latest) {
-          latest = currDate;
-        }
-        if(currDate < earliest) {
-          earliest = currDate;
-        }
-        // else not doing anything
-      }
-      setSelectedDateFrom(earliest);
-      setSelectedDateTo(latest);
-    }
-    // console.log("data length: "+props.data.length);
-    // console.log("earliest: "+selectedDateFrom);
-    // console.log("latest: "+selectedDateTo);
-  }, [props.data, props.data.length]);
+  // useEffect(() => {
+  //   var i, earliest, latest;
+  //   // Get the earliest and lastest date of the stock
+  //   // Make sure there is data available
+  //   if(props.data.length > 0) {
+  //     earliest = new Date(props.data[0].timestamp);
+  //     latest = new Date(props.data[0].timestamp);
+  //     for(i = 0; i < props.data.length; i++) {
+  //       var currDate = new Date(props.data[i].timestamp);
+  //       if(currDate > latest) {
+  //         latest = currDate;
+  //       }
+  //       if(currDate < earliest) {
+  //         earliest = currDate;
+  //       }
+  //       // else not doing anything
+  //     }
+  //     setSelectedDateFrom(earliest);
+  //     setSelectedDateTo(latest);
+  //   }
+  // }, [props.data, props.data.length]);
 
   // Handling functions for change
   function dateChangeFrom(date) { // (event, date) can be used but event is not needed
@@ -57,10 +56,10 @@ export default function DatePickers(props) {
       <Grid container justify="space-around">
         <KeyboardDatePicker
           id="date-picker-from"
-          label="From"
+          label="From (Inclusive)"
           variant="inline"
           margin="normal"
-          format="yyyy/MM/dd"
+          format="dd/MM/yyyy"
           value={selectedDateFrom}
           onChange={dateChangeFrom}
           KeyboardButtonProps={{
@@ -69,10 +68,10 @@ export default function DatePickers(props) {
         />
         <KeyboardDatePicker
           id="date-picker-to"
-          label="To (inclusive)"
+          label="To (Exclusive)"
           variant="inline"
           margin="normal"
-          format="yyyy/MM/dd"
+          format="dd/MM/yyyy"
           value={selectedDateTo}
           onChange={dateChangeTo}
           KeyboardButtonProps={{

@@ -40,9 +40,6 @@ export default function Stock_Detail() {
 						Number(dateParts[1]) - 1,
 						Number(dateParts[0])
 					);
-					// if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) { return 0; }
-					// else if (cellDate < filterLocalDateAtMidnight) { return -1; }
-					// else if (cellDate > filterLocalDateAtMidnight) { return 1; }
 					if (cellDate < filterLocalDateAtMidnight) {
 						return -1;
 					} else if (cellDate > filterLocalDateAtMidnight) {
@@ -102,7 +99,9 @@ export default function Stock_Detail() {
 	}
 
 	function onClearFilterClick() {
-
+		gridApi.setFilterModel(null);
+		gridApi.onFilterChanged();
+		setFilterData(rowData);
 	}
 
 	function onGridReady(params) {
@@ -134,9 +133,17 @@ export default function Stock_Detail() {
 				console.log("From: "+toStrFrom);
 				console.log("To: "+toStrTo);
 				filterInstance.setModel({
-					type: 'inRange',
-					dateFrom: toStrFrom,
-      				dateTo: toStrTo,
+					condition1: {
+						type: 'inRange',
+						dateFrom: toStrFrom,
+						dateTo: toStrTo,
+					},
+					operator: 'OR',
+					condition2: {
+						type: 'equals',
+						dateFrom: toStrFrom,
+						dateTo: null,
+					},
 				});
 				
 			} 
@@ -154,7 +161,7 @@ export default function Stock_Detail() {
 			for(i = 0; i < data.length; i++) {
 				realdata.push(data[i].data);
 			}
-			console.log(realdata);
+			//console.log(realdata);
 			setFilterData(realdata);
 			var height = 100 + (data.length >= 5 ? 220 : data.length * 55);
 			setWidthAndHeight('100%', `${height}px`);
@@ -195,7 +202,7 @@ export default function Stock_Detail() {
 			for(i = 0; i < data.length; i++) {
 				realdata.push(data[i].data);
 			}
-			console.log(realdata);
+			//console.log(realdata);
 			setFilterData(realdata);
 			var height = 100 + (data.length >= 5 ? 220 : data.length * 55);
 			setWidthAndHeight('100%', `${height}px`);
@@ -226,10 +233,10 @@ export default function Stock_Detail() {
 				<form autoComplete="off" alignment="right">
 					{/* Import from component so we do not have to put all codes into one file. */}
 					<label><b>Showing Date Range</b></label>
-					<DatePickers data={filterData} onDatesChange={onDateRangeChange} />
+					<DatePickers /*data={rowData}*/ onDatesChange={onDateRangeChange} />
 					<br/>
 					<label><b>Closing Price Range</b></label>
-					<PricePickers data={filterData} onPricesChange={onPriceRangeChange}/>
+					<PricePickers /*data={filterData}*/ onPricesChange={onPriceRangeChange}/>
 					{/* <br/>
 					<label><b>Showing Stocks' High Price</b></label>
 					<PricePickers /> */}
@@ -263,7 +270,7 @@ export default function Stock_Detail() {
 				<MultiAxisChart 
 					width="100%" 
 					height="400px" 
-					graphData={filterData}
+					graphData={filterData.length>0?filterData:rowData}
 				/>
 			</div>
 		</div>
