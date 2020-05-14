@@ -19,8 +19,8 @@ export default function Stock() {
 
 	const [rowData, setRowData] = useState([]);
 	const [gridApi, setGridApi] = useState(null);
-	const [textValue, setTextValue] = useState(""); // for stock textfield
-	const [textValue2, setTextValue2] = useState(""); // for industry textfield
+	//const [textValue, setTextValue] = useState(""); // for stock textfield
+	//const [textValue2, setTextValue2] = useState(""); // for industry textfield
 	const history = useHistory();
 	const [columnDefs, setColumnDefs] = useState([
 		{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
@@ -117,20 +117,19 @@ export default function Stock() {
 					type: 'equals',
 					filter: value.name
 				});
-				setTextValue(event.target.value);
-				console.log(textValue);
 			} 
 			// reset the filter if the value is empty.
 			else { 
 				filterInstance.setModel(null);
-				setTextValue('');
 			}
+			//setTextValue(value?value.name:'');
 			// Tell grid to run filter operation again
 			gridApi.onFilterChanged();
 			var dataLength = gridApi.getModel().rootNode.childrenAfterFilter.length;
 			console.log(dataLength +" results after filtered")
 			var height = 100 + (dataLength >= 10 ? 450 : dataLength * 50);
 			setWidthAndHeight('100%', `${height}px`);
+			//console.log(textValue);
 		}
 	}
 
@@ -144,30 +143,44 @@ export default function Stock() {
 					type: 'equals',
 					filter: value.industry
 				});
-				setTextValue2(event.target.value);
-				console.log(textValue2);
+				
 			} 
 			// reset the filter if the value is empty.
 			else { 
 				filterInstance.setModel(null);
-				setTextValue2('');
 			}
+			//setTextValue2(value?value.industry:'');
 			// Tell grid to run filter operation again
 			gridApi.onFilterChanged();
 			var dataLength = gridApi.getModel().rootNode.childrenAfterFilter.length;
 			console.log(dataLength +" results after filtered")
 			var height = 100 + (dataLength >= 10 ? 450 : dataLength * 50);
 			setWidthAndHeight('100%', `${height}px`);
+			//console.log(textValue2);
 		}
+	}
+
+	function onUpdateInputStock(searchText, tabAutocomplete, params) {
+		console.log("SearchText value: ", searchText) //here you will get searched text
+  		console.log("tabAutocomplete: ", tabAutocomplete) // here you will get your tabAutocomplete object
+  		console.log("Params: ", params)
+	}
+
+	function onUpdateInputIndustry(searchText, tabAutocomplete, params) {
+		console.log("SearchText value: ", searchText) //here you will get searched text
+  		console.log("tabAutocomplete: ", tabAutocomplete) // here you will get your tabAutocomplete object
+  		console.log("Params: ", params)
 	}
 
 	// button to reset the filter, perhaps this is redundant
 	function clearFilter() {
 		gridApi.setFilterModel(null);
-		setTextValue('');
-		setTextValue2('');
+		//setTextValue('');
+		//setTextValue2('');
 		// Tell grid to run filter operation again
-		gridApi.onFilterChanged();
+		// gridApi.onFilterChanged();
+		document.getElementById('search-stock-combo').value = null;
+		document.getElementById('filter-industry-combo').value = null;
 		setWidthAndHeight('100%', '550px');
 	}
 
@@ -219,6 +232,7 @@ export default function Stock() {
 							id="search-stock-combo"
 							style={{ width: 300 }}
 							onChange={onChangeStock}
+							//onUpdateInput={onUpdateInputStock}
 							options={stock_name_symbol}
 							classes={{
 								option: classes.option,
@@ -231,12 +245,11 @@ export default function Stock() {
 								{option.name}
 								</React.Fragment>
 							)}
-							//value={textValue}
 							renderInput={(params) => (
 							<TextField {...params}
 								label="Search Stocks" 
 								variant="outlined" 
-								value={textValue}
+								//value={textValue}
 								inputProps={{
 								...params.inputProps,
 								autoComplete: 'new-password', // disable autofill
@@ -249,14 +262,14 @@ export default function Stock() {
 							id="filter-industry-combo"
 							style={{ width: 300 }}
 							onChange={onChangeIndustry}
+							//onUpdateInput={onUpdateInputIndustry}
 							options={industries_uni}
 							getOptionLabel={(option) => option.industry}
-							//value={textValue2}
 							renderInput={(params) => (
 							<TextField {...params} 
 								label="Filter by Industries" 
 								variant="outlined"
-								value={textValue2}
+								//value={textValue2}
 							/>
 							)}
 						/>
