@@ -13,7 +13,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import MultiAxisChart from './component/MultiAxisChart';
-import DatePickers from "./component/DatePickers"
+import DatePickers from './component/DatePickers';
+import PricePickers from './component/PricePickers';
 
 
 export default function Stock_Detail() {
@@ -24,7 +25,7 @@ export default function Stock_Detail() {
 	const history = useHistory();
 
 	const [columnDefs, setColumnDefs] = useState([
-		//{ headerName: "timestamp", field: "timestamp", sortable: true, filter: "agDateColumnFilter", minWidth: 220 },
+		//{ headerName: "timestamp", field: "timestamp", sortable: true, filter: "agDateColumnFilter", minWidth: 220, valueFormatter: currencyFormatter },
 		{ headerName: "Date", field: "date", sortable: true, filter: "agDateColumnFilter", minWidth: 220 },
 		//{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
 		//{ headerName: "Name", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 400 },
@@ -78,6 +79,21 @@ export default function Stock_Detail() {
 		document.getElementById('filterDetail').innerHTML = "<b>Filters</b> (Click to "+(expand?"collapse":"expand")+")";
 	}
 
+	function onDateFromChange() {
+		console.log("onDateFromChange is called!");
+	}
+
+	function onDateToChange() {
+		console.log("onDateToChange is called!");
+	}
+
+	function onPriceFromChange() {
+		console.log("onPriceFromChange is called!");
+	}
+
+	function onPriceToChange() {
+		console.log("onPriceToChange is called!");
+	}
 
 	return (
 		<div className="container">
@@ -93,12 +109,17 @@ export default function Stock_Detail() {
 					<Typography className={classes.heading} id="filterDetail"><b>Filters</b> (Click to collapse)</Typography>
 				</ExpansionPanelSummary>
 				<ExpansionPanelDetails>
+				<form autoComplete="off" alignment="right">
 					{/* Import from component so we do not have to put all codes into one file. */}
-					<label><b>Showing Stocks</b></label>
-					<DatePickers />
-					
-					<label><b>Showing Stocks Price</b></label>
-
+					<label><b>Showing Date Range</b></label>
+					<DatePickers data={rowData} />
+					<br/>
+					<label><b>Closing Price Range</b></label>
+					<PricePickers data={rowData}/>
+					{/* <br/>
+					<label><b>Showing Stocks' High Price</b></label>
+					<PricePickers /> */}
+				</form>
 				</ExpansionPanelDetails>
 			</ExpansionPanel>
 			<br/>
@@ -109,7 +130,7 @@ export default function Stock_Detail() {
 				color="info" size="sm" className="mt-3" onClick={onBackButtonClick}>
 				Back to Stocks Page
 			</Button>
-			<div  id="myGrid" className="ag-theme-alpine-dark"
+			<div id="myGrid" className="ag-theme-alpine-dark"
 				style={{ height: "320px", width: "100%" }} >
 				<AgGridReact
 					columnDefs={columnDefs}
@@ -120,7 +141,14 @@ export default function Stock_Detail() {
 					paginationPageSize={5}
 				/>
 			</div>
-			<MultiAxisChart width="100%" height="400px"/>
+			{/* {console.log(rowData)} */}
+			<div>
+				<MultiAxisChart 
+					width="100%" 
+					height="400px" 
+					graphData={rowData}
+				/>
+			</div>
 		</div>
 	);
 }

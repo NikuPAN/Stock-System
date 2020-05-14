@@ -81,7 +81,7 @@ export default function Stock() {
 	// }
 	
 	function onRowClicked(event, val) {
-		console.log('a row was clicked', event.rowIndex);
+		console.log('A row was clicked: ', event.rowIndex);
 		const selectedSymbol = event.data.symbol;
 		history.push(`/stocks_detail/${selectedSymbol}`);
 	}

@@ -1,5 +1,5 @@
 import 'date-fns';
-import React, { useState }  from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 //import { FormRow } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
@@ -8,11 +8,36 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
-export default function DatePickers() {
+export default function DatePickers(props) {
+  
+  // Initialize
+  const [selectedDateFrom, setSelectedDateFrom] = useState();
+  const [selectedDateTo, setSelectedDateTo] = useState();
 
-  // The first commit of Material-UI
-  const [selectedDateFrom, setSelectedDateFrom] = useState(new Date());
-  const [selectedDateTo, setSelectedDateTo] = useState(new Date());
+  useEffect(() => {
+    var i, earliest, latest;
+    // Get the earliest and lastest date of the stock
+    // Make sure there is data available
+    if(props.data.length > 0) {
+      earliest = new Date(props.data[0].timestamp);
+      latest = new Date(props.data[0].timestamp);
+      for(i = 0; i < props.data.length; i++) {
+        var currDate = new Date(props.data[i].timestamp);
+        if(currDate > latest) {
+          latest = currDate;
+        }
+        if(currDate < earliest) {
+          earliest = currDate;
+        }
+        // else not doing anything
+      }
+      setSelectedDateFrom(earliest);
+      setSelectedDateTo(latest);
+    }
+    // console.log("data length: "+props.data.length);
+    // console.log("earliest: "+selectedDateFrom);
+    // console.log("latest: "+selectedDateTo);
+  }, [props.data, props.data.length]);
 
   function dateChangeFrom(date) {
     setSelectedDateFrom(date);
@@ -21,7 +46,7 @@ export default function DatePickers() {
   function dateChangeTo(date) {
     setSelectedDateTo(date);
   }
-
+  
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Grid container justify="space-around">
