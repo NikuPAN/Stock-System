@@ -56,8 +56,8 @@ class MultiAxisChart extends Component {
 			var i;
 			var closing_prices = [], high_prices = [];
 			for(i = 0; i < this.props.graphData.length; i++) {
-				closing_prices.push({x: new Date(this.props.graphData[i].date), y: this.props.graphData[i].close});
-				high_prices.push({x: new Date(this.props.graphData[i].date), y: this.props.graphData[i].volumes});
+				closing_prices.push({x: new Date(this.props.graphData[i].timestamp), y: this.props.graphData[i].close});
+				high_prices.push({x: new Date(this.props.graphData[i].timestamp), y: this.props.graphData[i].volumes});
 			}
 			this.dataPoint1 = closing_prices;
 			this.dataPoint2 = high_prices;

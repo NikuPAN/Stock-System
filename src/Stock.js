@@ -137,7 +137,6 @@ export default function Stock() {
 	function onChangeIndustry(event, value) {
 		
 		console.log("Industry Filter changed! "+(value!==null?value.industry:"Null"));
-
 		if(gridApi) {
 			var filterInstance = gridApi.getFilterInstance('industry');
 			if(value && value.industry.length !== "") {

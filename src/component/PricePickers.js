@@ -71,7 +71,7 @@ export default function PricePickers(props) {
                 id="outlined-number"
                 label="From"
                 type="number"
-                inputProps={{ min: "0.0", max: "999.9", step: "0.1" }}
+                inputProps={{ min: "0.0", max: "999.9", step: "0.01" }}
                 InputLabelProps={{
                     shrink: true
                 }}
@@ -83,7 +83,7 @@ export default function PricePickers(props) {
                 id="outlined-number"
                 label="To"
                 type="number"
-                inputProps={{ min: "0.0", max: "999.9", step: "0.1" }}
+                inputProps={{ min: "0.0", max: "999.9", step: "0.01" }}
                 InputLabelProps={{
                     shrink: true
                 }}

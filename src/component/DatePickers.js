@@ -69,7 +69,7 @@ export default function DatePickers(props) {
         />
         <KeyboardDatePicker
           id="date-picker-to"
-          label="To"
+          label="To (inclusive)"
           variant="inline"
           margin="normal"
           format="yyyy/MM/dd"

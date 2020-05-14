@@ -15,18 +15,44 @@ import { useHistory } from 'react-router-dom';
 import MultiAxisChart from './component/MultiAxisChart';
 import DatePickers from './component/DatePickers';
 import PricePickers from './component/PricePickers';
+import moment from 'moment';
 
 
 export default function Stock_Detail() {
 
 	const [rowData, setRowData] = useState([]);
+	const [filterData, setFilterData] = useState([]);
 	const [gridApi, setGridApi] = useState(null);
 	const { symbol } = useParams();
 	const history = useHistory();
 
 	const [columnDefs, setColumnDefs] = useState([
 		//{ headerName: "timestamp", field: "timestamp", sortable: true, filter: "agDateColumnFilter", minWidth: 220, valueFormatter: currencyFormatter },
-		{ headerName: "Date", field: "date", sortable: true, filter: "agDateColumnFilter", minWidth: 220 },
+		{ headerName: "Date", field: "date", sortable: true, filter: "agDateColumnFilter",
+			filterParams: {
+				comparator: function(filterLocalDateAtMidnight, cellValue) {
+					var dateAsString = cellValue; // days is stored as DD/MM/YYYY
+					if (dateAsString == null) 
+						return -1;
+					var dateParts = dateAsString.split('/');
+					var cellDate = new Date(
+						Number(dateParts[2]),
+						Number(dateParts[1]) - 1,
+						Number(dateParts[0])
+					);
+					// if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) { return 0; }
+					// else if (cellDate < filterLocalDateAtMidnight) { return -1; }
+					// else if (cellDate > filterLocalDateAtMidnight) { return 1; }
+					if (cellDate < filterLocalDateAtMidnight) {
+						return -1;
+					} else if (cellDate > filterLocalDateAtMidnight) {
+						return 1;
+					} else {
+						return 0;
+					}
+				},
+            },
+		 minWidth: 220 },
 		//{ headerName: "Symbol", field: "symbol", sortable: true, filter: "agTextColumnFilter", minWidth: 250 },
 		//{ headerName: "Name", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 400 },
 		//{ headerName: "Industry", field: "industry", sortable: true, filter: "agTextColumnFilter", minWidth: 350 },
@@ -44,7 +70,7 @@ export default function Stock_Detail() {
 				data.map(stock => {
 					return {
 					timestamp: stock.timestamp,
-					date: new Date(stock.timestamp).toLocaleDateString(),
+					date: timestampToDDMMYYYY(stock.timestamp),
 					symbol: stock.symbol,
 					name: stock.name,
 					industry: stock.industry,
@@ -57,7 +83,7 @@ export default function Stock_Detail() {
 				})
 			)
 			.then(stocks => setRowData(stocks));
-	}, []);
+	}, [rowData, symbol]);
 
 	const useStyles = makeStyles((theme) => ({
 		root: {
@@ -70,6 +96,21 @@ export default function Stock_Detail() {
 	}));
 	const classes = useStyles();
 
+	function timestampToDDMMYYYY(timestamp) {
+		var dateobj = new Date(timestamp);
+		return dateobj.getDate()+'/' + (dateobj.getMonth()+1) + '/'+dateobj.getFullYear();
+	}
+
+	function onClearFilterClick() {
+
+	}
+
+	function onGridReady(params) {
+		setGridApi(params.api);
+		console.log(rowData);
+
+	}
+
 	function onBackButtonClick() {
 		history.push("/stocks");
 	}
@@ -78,14 +119,94 @@ export default function Stock_Detail() {
 	function onExpandPanelChange(event, expand) {
 		document.getElementById('filterDetail').innerHTML = "<b>Filters</b> (Click to "+(expand?"collapse":"expand")+")";
 	}
+	// functions from online
+	function replaceAll(string, search, replace) {
+		return string.split(search).join(replace);
+	  }
 
 	function onDateRangeChange(from, to) {
-		console.log("onDateRangeChange is called! (From: "+from+", To:"+to);
-	}
+		console.log("onDateRangeChange is called!");
+		if(gridApi) {
+			var filterInstance = gridApi.getFilterInstance('date');
+			if(from != null && to != null) {
+				var toStrFrom = replaceAll(from.toLocaleDateString(), '/', '-');
+				var toStrTo = replaceAll(to.toLocaleDateString(), '/', '-');
+				console.log("From: "+toStrFrom);
+				console.log("To: "+toStrTo);
+				filterInstance.setModel({
+					type: 'inRange',
+					dateFrom: toStrFrom,
+      				dateTo: toStrTo,
+				});
+				
+			} 
+			// reset the filter if the value is empty.
+			else { 
+				filterInstance.setModel(null);
+			}
+			// Tell grid to run filter operation again
+			gridApi.onFilterChanged();
 
+			var data = gridApi.getModel().rootNode.childrenAfterFilter;
+			console.log(data.length +" results after filtered")
+			//console.log(data);
+			var i, realdata = [];
+			for(i = 0; i < data.length; i++) {
+				realdata.push(data[i].data);
+			}
+			console.log(realdata);
+			setFilterData(realdata);
+			var height = 100 + (data.length >= 5 ? 220 : data.length * 55);
+			setWidthAndHeight('100%', `${height}px`);
+		}
+	}
 
 	function onPriceRangeChange(from, to) {
 		console.log("onPriceRangeChange is called! (From: "+from+", To:"+to);
+		if(gridApi) {
+			var filterInstance = gridApi.getFilterInstance('close');
+			if(from != null && to != null && from !== '' && to !== '') {
+				filterInstance.setModel({
+					condition1: {
+						type: 'greaterThanOrEqual',
+						filter: from,
+						filterTo: null,
+					}, 
+					operator: 'AND',
+					condition2: {
+						type: 'lessThanOrEqual',
+						filter: to,
+						filterTo: null,
+					}
+				});
+				
+			} 
+			// reset the filter if the value is empty.
+			else { 
+				filterInstance.setModel(null);
+			}
+			// Tell grid to run filter operation again
+			gridApi.onFilterChanged();
+
+			var data = gridApi.getModel().rootNode.childrenAfterFilter;
+			console.log(data.length +" results after filtered")
+			//console.log(data);
+			var i, realdata = [];
+			for(i = 0; i < data.length; i++) {
+				realdata.push(data[i].data);
+			}
+			console.log(realdata);
+			setFilterData(realdata);
+			var height = 100 + (data.length >= 5 ? 220 : data.length * 55);
+			setWidthAndHeight('100%', `${height}px`);
+		}
+	}
+
+	function setWidthAndHeight(width, height) {
+		var eGridDiv = document.querySelector('#myGrid');
+		eGridDiv.style.width = width;
+		eGridDiv.style.height = height;
+		gridApi.doLayout();
 	}
 
 	return (
@@ -105,13 +226,17 @@ export default function Stock_Detail() {
 				<form autoComplete="off" alignment="right">
 					{/* Import from component so we do not have to put all codes into one file. */}
 					<label><b>Showing Date Range</b></label>
-					<DatePickers data={rowData} onDatesChange={onDateRangeChange} />
+					<DatePickers data={filterData} onDatesChange={onDateRangeChange} />
 					<br/>
 					<label><b>Closing Price Range</b></label>
-					<PricePickers data={rowData} onPricesChange={onPriceRangeChange}/>
+					<PricePickers data={filterData} onPricesChange={onPriceRangeChange}/>
 					{/* <br/>
 					<label><b>Showing Stocks' High Price</b></label>
 					<PricePickers /> */}
+					<Button 
+						color="info" size="sm" className="mt-3" onClick={onClearFilterClick}>
+						Clear Filter
+					</Button>
 				</form>
 				</ExpansionPanelDetails>
 			</ExpansionPanel>
@@ -128,18 +253,17 @@ export default function Stock_Detail() {
 				<AgGridReact
 					columnDefs={columnDefs}
 					rowData={rowData}
-					onGridReady={ params => setGridApi(params.api) }
+					onGridReady={onGridReady}
 					// onRowClicked={}
 					pagination={true}
 					paginationPageSize={5}
 				/>
 			</div>
-			{/* {console.log(rowData)} */}
 			<div>
 				<MultiAxisChart 
 					width="100%" 
 					height="400px" 
-					graphData={rowData}
+					graphData={filterData}
 				/>
 			</div>
 		</div>
