@@ -15,7 +15,6 @@ import { useHistory } from 'react-router-dom';
 import MultiAxisChart from './component/MultiAxisChart';
 import DatePickers from './component/DatePickers';
 import PricePickers from './component/PricePickers';
-import moment from 'moment';
 
 
 export default function Stock_Detail() {
