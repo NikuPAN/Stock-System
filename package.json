@@ -16,7 +16,7 @@
     "bootstrap": "4.4.1",
     "chart.js": "^2.9.3",
     "date-fns": "^2.13.0",
-    "jquery": "^1.9.1",
+    "jquery": "^3.5.0",
     "ngrok": "^3.2.7",
     "react": "16.13.1",
     "react-chartjs-2": "^2.9.0",
